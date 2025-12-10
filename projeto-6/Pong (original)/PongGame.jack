@@ -129,8 +129,8 @@ class PongGame {
                     do Output.moveCursor(22,7);
                     do Output.printInt(score);
                 }
+		do ball.bounce(bouncingDirection);
             }
-            do ball.bounce(bouncingDirection);
         }
         return;
     }

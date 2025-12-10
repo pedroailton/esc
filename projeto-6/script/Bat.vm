@@ -104,7 +104,7 @@ function Bat.move 0
     not
     if-goto Bat_1
     push this 0
-    push constant 4
+    push constant 1
     sub
     pop this 0
     push this 0
@@ -117,6 +117,14 @@ function Bat.move 0
     goto Bat_2
 label Bat_3
 label Bat_2
+    push this 0
+    push this 2
+    add
+    push constant 510
+    gt
+    not
+    not
+    if-goto Bat_5
     push constant 0
     call Screen.setColor 1
     pop temp 0
@@ -129,13 +137,16 @@ label Bat_2
     push this 0
     push this 2
     add
-    push constant 4
+    push constant 1
     add
     push this 1
     push this 3
     add
     call Screen.drawRectangle 4
     pop temp 0
+    goto Bat_4
+label Bat_5
+label Bat_4
     push constant 1
     neg
     call Screen.setColor 1
@@ -143,8 +154,6 @@ label Bat_2
     push this 0
     push this 1
     push this 0
-    push constant 3
-    add
     push this 1
     push this 3
     add
@@ -153,7 +162,7 @@ label Bat_2
     goto Bat_0
 label Bat_1
     push this 0
-    push constant 4
+    push constant 1
     add
     pop this 0
     push this 0
@@ -162,19 +171,24 @@ label Bat_1
     push constant 511
     gt
     not
-    if-goto Bat_5
+    if-goto Bat_7
     push constant 511
     push this 2
     sub
     pop this 0
-    goto Bat_4
-label Bat_5
-label Bat_4
+    goto Bat_6
+label Bat_7
+label Bat_6
+    push this 0
+    push constant 0
+    gt
+    not
+    if-goto Bat_9
     push constant 0
     call Screen.setColor 1
     pop temp 0
     push this 0
-    push constant 4
+    push constant 1
     sub
     push this 1
     push this 0
@@ -185,6 +199,9 @@ label Bat_4
     add
     call Screen.drawRectangle 4
     pop temp 0
+    goto Bat_8
+label Bat_9
+label Bat_8
     push constant 1
     neg
     call Screen.setColor 1
@@ -192,8 +209,6 @@ label Bat_4
     push this 0
     push this 2
     add
-    push constant 3
-    sub
     push this 1
     push this 0
     push this 2

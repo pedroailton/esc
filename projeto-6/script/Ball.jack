@@ -6,32 +6,52 @@
 /**
  * A graphical ball. Characterized by a screen location and distance of 
  * last destination. Has methods for drawing, erasing and moving on the screen.
- * The ball is displayed as a filled, 6-by-6 pixles rectangle. 
+ * The ball is displayed as a filled, 6-by-6 pixels rectangle. 
  */
 class Ball {
+    field int x, y; // Ponto de origem da sprite da bola: borda superior esquerda (em pixels)
 
-    field int x, y;               // the ball's screen location (in pixels)
-    field int lengthx, lengthy;   // distance of last destination (in pixels)
+    // distância até o destino da bola: deslocamento horizontal e vertical (em pixels)
+    field int lengthx, lengthy; // são decrementadas à medida que a bola se move até chegarem a zero
 
-    field int d, straightD, diagonalD;            // used for straight line movement computation
-    field boolean invert, positivex, positivey;   // (same)
-   
-    field int leftWall, rightWall, topWall, bottomWall;  // wall locations
-   
-    field int wall;   // last wall that the ball was bounced off of
+    // parâmetros do algoritmo tipo Bresenham
+    field int d; // acumulador usado para decidir quando dar o passo vertical vs. horizontal
+    field int straightD; // incremento quando erro < 0 (movimento apenas no eixo principal)
+    field int diagonalD; // incremento quando erro >= 0 (movimento nos dois ueixos)
+
+    field boolean invert; // indica se o movimento é mais horizontal ou mais vertical (true -> eixo principal = Y, eixo secundário = X; false -> eixo principal = X, eixo vertical = Y)
+    field boolean positivex; // direção em X (true = positivo / para a direita)
+    field boolean positivey; // direção em Y (true = positivo / para baixo)
+
+    field int leftWall, rightWall, topWall, bottomWall;  // limites (ajustados para o tamanho da bola)
+    field int wall;   // Última parede que a bola tocou (0 = nenhuma, 1=left, 2=right, 3=top, 4=bottom)
 
     /** Constructs a new ball with the given initial location and wall locations. */
-    constructor Ball new(int Ax, int Ay,
-                         int AleftWall, int ArightWall, int AtopWall, int AbottomWall) {    	
-	    let x = Ax;		
-	    let y = Ay;
-	    let leftWall = AleftWall;
-	    let rightWall = ArightWall - 6;    // -6 for ball size
-	    let topWall = AtopWall; 
-	    let bottomWall = AbottomWall - 6;  // -6 for ball size
-	    let wall = 0;
-        do show();
-        return this;
+    constructor Ball new(int Ax, int Ay, int AleftWall, int ArightWall, int AtopWall, int AbottomWall) {    	
+        let x = Ax;
+        let y = Ay;
+
+        let leftWall = AleftWall;
+        let rightWall = ArightWall - 6;    // -6 for ball size
+        let topWall = AtopWall; 
+        let bottomWall = AbottomWall - 6;  // -6 for ball size
+
+        let wall = 0;
+
+        let lengthx = 0;
+        let lengthy = 0;
+
+        // Variáveis para o algoritmo de movimentação de Bresenham, utilizado em .move()
+        let d = 0;
+        let straightD = 0;
+        let diagonalD = 0;
+        let invert = false; // por padrão, o eixo principal é X e o secundário é Y
+        let positivex = true;
+        let positivey = true;
+
+        do show(); // desenha a bola na tela
+
+        return this; // retorna o objeto criado pela classe para PongGame.jack
     }
 
     /** Deallocates the Ball's memory. */
@@ -50,14 +70,14 @@ class Ball {
     /** Hides the ball. */
     method void hide() {
         do Screen.setColor(false);
-	    do draw();
+        do draw();
         return;
     }
 
     /** Draws the ball. */
     method void draw() {
-	    do Screen.drawRectangle(x, y, x + 5, y + 5);
-	    return;
+        do Screen.drawRectangle(x, y, x + 5, y + 5);
+        return;
     }
 
     /** Returns the ball's left edge. */
@@ -70,134 +90,227 @@ class Ball {
         return x + 5;
     }
 
-    /** Computes and sets the ball's destination. */
+    /** Calcula e define o destino da bola.*/
     method void setDestination(int destx, int desty) {
         var int dx, dy, temp;
-  	    let lengthx = destx - x;
-	    let lengthy = desty - y;
+
+        // calcula deslocamentos (quanto falta ir)
+        let lengthx = destx - x; // destino - posição x atual
+        let lengthy = desty - y; // destino - posição y atual
+
+        // valores absolutos para o algoritmo discretizado (Bresenham)
         let dx = Math.abs(lengthx);
         let dy = Math.abs(lengthy);
+
+        // decide se devemos "inverter" eixos (movimento mais vertical que horizontal)
+        // se a distância até o destino para y for maior do que o para x,  o eixo principal de movimento é y
+        // e o invert é true
         let invert = (dx < dy);
 
         if (invert) {
-            let temp = dx; // swap dx, dy
+            // troca dx, dy para o algoritmo (trabalhamos sempre com dx >= dy internamente)
+            let temp = dx;
             let dx = dy;
             let dy = temp;
-   	        let positivex = (y < desty);
-            let positivey = (x < destx);
-        }
-        else {
-	        let positivex = (x < destx);
-            let positivey = (y < desty);
         }
 
+        // direção verdadeira em cada eixo (com base no sinal do deslocamento original)
+        let positivex = (lengthx > 0); // true->direita
+        let positivey = (lengthy > 0); // true->baixo (coord. y aumenta para baixo na tela)
+
+        // inicializa os parâmetros do algoritmo tipo Bresenham
+        // d começa em 2*dy - dx
         let d = (2 * dy) - dx;
         let straightD = 2 * dy;
-        let diagonalD = 2 * (dy - dx);
+        let diagonalD = 2 * (dy - dx); // valor sempre negativo ou 0
 
-	    return;
+        return;
     }
 
-    /**
+     /**
      * Move a bola uma unidade em direção ao seu destino.
-     * Se a bola atingir uma parede, retorna 0.
-     * Caso contrário, retorna um valor de acordo com a parede:
-     * 1 (parede esquerda), 2 (parede direita), 3 (parede superior), 4 (parede inferior).
+     * Retorna 0 se já estiver no destino
+     * Utiliza o algoritmo de Bresenham, útil para movimentos em reta utilizando apenas inteiros
      */
     method int move() {
+        var int STEP; // variável que indica o tamanho do passo (step) de cada .move() da bola
+        let STEP = 1; // o step será 1
 
-	    do hide(); // apaga a posição anterior da bola
+        do hide(); // apaga sempre a posição anterior da bola
 
-        if (d < 0) { let d = d + straightD; }
+        // Se já está no destino, não se move
+        if ((lengthx = 0) & (lengthy = 0)) {
+            do show();
+            return 0; // indica colisão
+        }
+
+        // Atualiza o acumulador d (Bresenham)
+        if (d < 0) {
+            let d = d + straightD;
+        }
         else {
             let d = d + diagonalD;
 
-            if (positivey) {
-                if (invert) { let x = x + 4; }
-                else { let y = y + 4; }
+            // Passo no Eixo Secundário (Menor)
+            // Se invertido, o eixo secundário é X
+            if (invert) {
+                // Se a direção é pra direita (positivex = true)
+                if (positivex) { 
+                    let x = x + STEP; // a bola se move no eixo horizontal para a direita
+                    if (lengthx > 0) { let lengthx = lengthx - STEP; } // decrementa a distância absoluta até o destino, horizontalmente (aproximação)
+                }
+                // Se não, a direção é para esquerda (positivex = false)
+                else { 
+                    let x = x - STEP; //a bola se move no eixo horizontal para a esquerda
+                    if (lengthx < 0) { let lengthx = lengthx + STEP; } // incrementa a distância absoluta até o destino, horizontalmente
+                }
             }
             else {
-                if (invert) { let x = x - 4; }
-                else { let y = y - 4; }
+                // Se normal, o eixo secundário é Y
+                // Se a direção é para baixo (positivey = true)
+                if (positivey) { 
+                    let y = y + STEP; // a bola se move no eixo vertical para baixo
+                    if (lengthy > 0) { let lengthy = lengthy - STEP; } // a distância absoluta até o destino é decrementada (aproximação)
+                }
+                // Se a direção é para cima (positivey = false)
+                else { 
+                    let y = y - STEP; // a bola se move no eixo vertical para cima
+                    if (lengthy < 0) { let lengthy = lengthy + STEP; } // a distância absoluta até o destino é incrementada
+                }
             }
-	    }
-
-        if (positivex) {
-            if (invert) { let y = y + 4; }
-            else { let x = x + 4; }
-	    }
-	    else {
-            if (invert) { let y = y - 4; }
-            else { let x = x - 4; }
-	    }
-
-	    if (~(x > leftWall)) {
-	        let wall = 1;    
-	        let x = leftWall;
-	    }
-        if (~(x < rightWall)) {
-	        let wall = 2;    
-	        let x = rightWall;
-	    }
-        if (~(y > topWall)) {
-            let wall = 3;    
-	        let y = topWall;
-        }
-        if (~(y < bottomWall)) {
-            let wall = 4;    
-	        let y = bottomWall;
         }
 
-	    do show();
+        // Passo no Eixo Principal (Maior)
+        if (invert) {
+            // Se invertido, o eixo principal é Y
+            if (positivey) { 
+                let y = y + STEP; // passo no eixo vertical para baixo
+                if (lengthy > 0) { let lengthy = lengthy - STEP; } // aproximação do destino (lengthy = 0)
+            }
+            else { 
+                let y = y - STEP; // passo no eixo vertical para cima
+                if (lengthy < 0) { let lengthy = lengthy + STEP; }
+            }
+        }
+        else {
+            // Se normal, o eixo principal é X
+            if (positivex) { 
+                let x = x + STEP; // passo no eixo horizontal para a direita
+                if (lengthx > 0) { let lengthx = lengthx - STEP; }
+            }
+            else { 
+                let x = x - STEP; // passo no eixo horizontal para a esquerda
+                if (lengthx < 0) { let lengthx = lengthx + STEP; }
+            }
+        }
 
-	    return wall;
+        // Verifica colisão com as paredes
+        let wall = 0;
+
+        // se a bola está mais a esquerda do que a parede esquerda, está fora e colidiu
+        if (x < leftWall) {
+            let wall = 1;
+            let x = leftWall;
+        }
+        // se a bola está mais a direita do que a parede direita, está fora e colidiu
+        if (x > rightWall) {
+            let wall = 2;
+            let x = rightWall;
+        }
+
+        // se a bola está mais acima do que a parede de cima, está fora e colidiu
+        if (y < topWall) {
+            let wall = 3;
+            let y = topWall;
+        }
+
+        // se a bola está mais abaixo do que a parede de baixo, está fora e colidiu
+        if (y > bottomWall) {
+            let wall = 4;
+            let y = bottomWall;
+        }
+
+        // Se bateu na parede, zera o destino para forçar recálculo no método bounce
+        if (~(wall = 0)) {
+            let lengthx = 0;
+            let lengthy = 0;
+        }
+
+        do show();
+        return wall;
     }
 
     /**
-     * Bounces off the current wall: sets the new destination
-     * of the ball according to the ball's angle and the given
-     * bouncing direction (-1/0/1=left/center/right or up/center/down).
-     */
+    * Rebate na parede atual: define o novo destino da bola de acordo com o ângulo da bola e a direção de ricochete.
+    * (-1/0/1=left/center/right or up/center/down)
+    */
     method void bounce(int bouncingDirection) {
-        var int newx, newy, divLengthx, divLengthy, factor;
+        // ...
+        var int newx, newy;
 
-	    // dividing by 10 first since results are too big
-        let divLengthx = lengthx / 10;
-        let divLengthy = lengthy / 10;
-	    if (bouncingDirection = 0) { let factor = 10; }
-	    else {
-	        if (((~(lengthx < 0)) & (bouncingDirection = 1)) | ((lengthx < 0) & (bouncingDirection = (-1)))) {
-                let factor = 20; // bounce direction is in ball direction
-            }
-	        else { let factor = 5; } // bounce direction is against ball direction
-	    }
+        // Define uma distancia longa suficiente para o alvo
+        // O que importa é esse valor ser maior do que um possível caminho da bola
+        // uma vez que quando ela tocar na bola esse valor, a função de bouncing é ativada
+        // mesmo não alcançando essa distância
+        // e ela é usada novamente para definir um novo destino
+        var int dist;
+        let dist = 600; 
+        
+        // Se bateu na esquerda (1), deve ir para a direita
+        if (wall = 1) {
+            let newx = rightWall;
 
-	    if (wall = 1) {
-	        let newx = 506;
-	        let newy = (divLengthy * (-50)) / divLengthx;
-            let newy = y + (newy * factor);
-	    }
+            // Mantém a direção vertical que já tinha
+            // atualiza a distância até o destino, para que ele não zere antes da hora
+            if (positivey) { let newy = y + dist; }
+
+            // positivey = true -> cima
+            else { let newy = y - dist; }
+        }
+
         else {
+            // Se bateu na direita (2), deve ir para a esquerda
             if (wall = 2) {
-                let newx = 0;
-                let newy = (divLengthy * 50) / divLengthx;
-                let newy = y + (newy * factor);
-	        }
-	        else {
-                if (wall = 3) {
-		            let newy = 250;
-		            let newx = (divLengthx * (-25)) / divLengthy;
-                    let newx = x + (newx * factor);
-		        }
-                else { // assumes wall = 4
-		            let newy = 0;
-		            let newx = (divLengthx * 25) / divLengthy;
-                    let newx = x + (newx * factor);
-		        }
+                let newx = leftWall;
+                if (positivey) { let newy = y + dist; }
+                else { let newy = y - dist; }
             }
+            else {
+                // Se bateu no topo (3), deve ir para baixo
+                if (wall = 3) {
+                    let newy = bottomWall;
+                    // Mantém a direção horizontal que já tinha
+                    if (positivex) { let newx = x + dist; }
+                    else { let newx = x - dist; }
+                }
+                else {
+                    // Se bateu embaixo (4), deve ir para cima
+                    let newy = topWall;
+                    if (positivex) { let newx = x + dist; }
+                    else { let newx = x - dist; }
+                }
+            }
+        }
+
+        // Aplica o efeito da raquete (bouncingDirection)
+        // O bouncingDirection vem como -1 (cima/esq) ou 1 (baixo/dir)
+        // Ajustamos apenas o Y quando batemos nas laterais para simplificar
+        if ((wall = 1) | (wall = 2)) {
+            let newy = newy + (bouncingDirection * 50);
         }
 
         do setDestination(newx, newy);
         return;
     }
+
+    /*
+    method void explodeAnimation(int Ax, int Ay) {
+        do hide();
+        // Frame 1
+
+        // Frame 2
+
+        return;
+        // terminar depois
+    }*/
 }

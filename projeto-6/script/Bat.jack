@@ -26,7 +26,7 @@ class Bat {
         let y = Ay;
         let width = Awidth;
         let height = Aheight;
-        let direction = 2;
+        let direction = 2; // 
         do show();
         return this;
     }
@@ -39,9 +39,18 @@ class Bat {
 
     /** Shows the bat. */
     method void show() {
-        do Screen.setColor(true);
+        do Screen.setColor(true); // esse trecho que deve mudar quando eu for trocar o tema de fundo
         do draw();
         return;
+	
+	/*
+	if (screenMode = "claro"):
+		do Screen.setColor(false);
+	else {
+		if (screenMode = "escuro") {
+		}
+	}
+	*/
     }
 
     /** Hides the bat. */
@@ -83,21 +92,35 @@ class Bat {
 
     /** Moves the bat one step in the bat's direction. */
     method void move() {
-	    if (direction = 1) {
-            let x = x - 4;
+        if (direction = 1) {
+            // Movimento para a Esquerda
+            let x = x - 1;
             if (x < 0) { let x = 0; }
-            do Screen.setColor(false);
-            do Screen.drawRectangle((x + width) + 1, y, (x + width) + 4, y + height);
+            
+            // Só apaga o rastro à direita se não estourar a tela (511)
+            if (~((x + width) > 510)) {
+                do Screen.setColor(false);
+                do Screen.drawRectangle((x + width) + 1, y, (x + width) + 1, y + height);
+            }
+            
+            // Desenha a nova linha à esquerda
             do Screen.setColor(true);
-            do Screen.drawRectangle(x, y, x + 3, y + height);
+            do Screen.drawRectangle(x, y, x, y + height);
         }
         else {
-            let x = x + 4;
+            // Movimento para a Direita
+            let x = x + 1;
             if ((x + width) > 511) { let x = 511 - width; }
-            do Screen.setColor(false);
-            do Screen.drawRectangle(x - 4, y, x - 1, y + height);
+            
+            // Só apaga o rastro à esquerda se x > 0 (para não desenhar em x=-1)
+            if (x > 0) {
+                do Screen.setColor(false);
+                do Screen.drawRectangle(x - 1, y, x - 1, y + height);
+            }
+            
+            // Desenha a nova linha à direita
             do Screen.setColor(true);
-            do Screen.drawRectangle((x + width) - 3, y, x + width, y + height);
+            do Screen.drawRectangle(x + width, y, x + width, y + height);
         }
         return;
     }

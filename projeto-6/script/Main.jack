@@ -1,7 +1,10 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-// File name: projects/11/Pong/Main.jack
+// Esse arquivo foi adaptado a partir do projeto Pong do site nand2tetris
+// Aluno: Pedro Ailton Alves da Cunha
+// Turma: BSI 2º Período 2025.2
+// Disciplina: Elementos de Sistemas Computacionais
+// Professor: Lucas Cambuim
+// Nome do Projeto: UFRPong
+// Descrição do Projeto: Jogo de Ping Pong para dois jogadores utilizando a linguagem Jack e o software do Nand to Tetris para execução do programa
 
 /**
  * The main class of the Pong game.

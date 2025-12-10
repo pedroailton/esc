@@ -9,28 +9,29 @@ function PongGame.new 0
     push constant 50
     pop this 10
     push constant 230
-    push constant 229
-    push this 11
-    push constant 7
-    call Bat.new 4
-    pop this 1
     push constant 8
-    push constant 229
-    push this 11
+    push this 10
     push constant 7
     call Bat.new 4
     pop this 0
+    push constant 230
+    push constant 229
+    push this 9
+    push constant 7
+    call Bat.new 4
+    pop this 1
     push constant 253
     push constant 222
     push constant 0
     push constant 511
-    push constant 0
+    push constant 8
     push constant 229
     call Ball.new 6
     pop this 2
     push this 2
-    push constant 400
-    push constant 0
+    push constant 200
+    push constant 100
+    neg
     call Ball.setDestination 3
     pop temp 0
     push constant 0
@@ -44,54 +45,6 @@ function PongGame.new 0
     push constant 511
     push constant 6
     call Screen.drawRectangle 4
-    pop temp 0
-    push constant 22
-    push constant 0
-    call Output.moveCursor 2
-    pop temp 0
-    push constant 20
-    call String.new 1
-    push constant 83
-    call String.appendChar 2
-    push constant 99
-    call String.appendChar 2
-    push constant 111
-    call String.appendChar 2
-    push constant 114
-    call String.appendChar 2
-    push constant 101
-    call String.appendChar 2
-    push constant 58
-    call String.appendChar 2
-    push constant 32
-    call String.appendChar 2
-    push constant 80
-    call String.appendChar 2
-    push constant 49
-    call String.appendChar 2
-    push constant 58
-    call String.appendChar 2
-    push constant 32
-    call String.appendChar 2
-    push constant 48
-    call String.appendChar 2
-    push constant 32
-    call String.appendChar 2
-    push constant 47
-    call String.appendChar 2
-    push constant 32
-    call String.appendChar 2
-    push constant 80
-    call String.appendChar 2
-    push constant 50
-    call String.appendChar 2
-    push constant 58
-    call String.appendChar 2
-    push constant 32
-    call String.appendChar 2
-    push constant 48
-    call String.appendChar 2
-    call Output.printString 1
     pop temp 0
     push constant 0
     pop this 4
@@ -133,6 +86,68 @@ function PongGame.getInstance 0
 function PongGame.run 1
     push argument 0
     pop pointer 0
+    push constant 22
+    push constant 0
+    call Output.moveCursor 2
+    pop temp 0
+    push constant 20
+    call String.new 1
+    push constant 83
+    call String.appendChar 2
+    push constant 99
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 58
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 80
+    call String.appendChar 2
+    push constant 49
+    call String.appendChar 2
+    push constant 58
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 88
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 47
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 80
+    call String.appendChar 2
+    push constant 50
+    call String.appendChar 2
+    push constant 58
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 88
+    call String.appendChar 2
+    call Output.printString 1
+    pop temp 0
+    push constant 22
+    push constant 12
+    call Output.moveCursor 2
+    pop temp 0
+    push this 6
+    call Output.printInt 1
+    pop temp 0
+    push constant 22
+    push constant 20
+    call Output.moveCursor 2
+    pop temp 0
+    push this 7
+    call Output.printInt 1
+    pop temp 0
 label PongGame_0
     push this 4
     not
@@ -161,13 +176,13 @@ label PongGame_2
     push pointer 0
     call PongGame.moveBall 1
     pop temp 0
-    push constant 50
+    push constant 1
     call Sys.wait 1
     pop temp 0
     goto PongGame_2
 label PongGame_3
     push local 0
-    push constant 130
+    push constant 97
     eq
     not
     if-goto PongGame_5
@@ -178,7 +193,7 @@ label PongGame_3
     goto PongGame_4
 label PongGame_5
     push local 0
-    push constant 132
+    push constant 100
     eq
     not
     if-goto PongGame_7
@@ -191,7 +206,7 @@ label PongGame_7
 label PongGame_6
 label PongGame_4
     push local 0
-    push constant 97
+    push constant 130
     eq
     not
     if-goto PongGame_9
@@ -202,7 +217,7 @@ label PongGame_4
     goto PongGame_8
 label PongGame_9
     push local 0
-    push constant 100
+    push constant 132
     eq
     not
     if-goto PongGame_11
@@ -246,13 +261,11 @@ label PongGame_14
     push pointer 0
     call PongGame.moveBall 1
     pop temp 0
-    push constant 50
+    push constant 1
     call Sys.wait 1
     pop temp 0
     goto PongGame_14
 label PongGame_15
-    goto PongGame_0
-label PongGame_1
     push this 4
     push this 3
     and
@@ -269,6 +282,7 @@ label PongGame_1
     pop temp 0
     goto PongGame_16
 label PongGame_17
+label PongGame_16
     push this 4
     push this 3
     and
@@ -286,7 +300,8 @@ label PongGame_17
     goto PongGame_18
 label PongGame_19
 label PongGame_18
-label PongGame_16
+    goto PongGame_0
+label PongGame_1
     push constant 0
     return
 function PongGame.moveBall 7
@@ -371,6 +386,9 @@ label PongGame_28
 label PongGame_26
     goto PongGame_24
 label PongGame_25
+label PongGame_24
+    goto PongGame_22
+label PongGame_23
     push this 3
     push constant 4
     eq
@@ -411,6 +429,8 @@ label PongGame_35
     pop local 0
     goto PongGame_36
 label PongGame_37
+    push constant 0
+    pop local 0
 label PongGame_36
 label PongGame_34
     goto PongGame_32
@@ -419,17 +439,14 @@ label PongGame_32
     goto PongGame_30
 label PongGame_31
 label PongGame_30
-label PongGame_24
-    goto PongGame_22
-label PongGame_23
 label PongGame_22
-    goto PongGame_20
-label PongGame_21
-label PongGame_20
     push this 2
     push local 0
     call Ball.bounce 2
     pop temp 0
+    goto PongGame_20
+label PongGame_21
+label PongGame_20
     push constant 0
     return
 function PongGame.finalScreen 1
@@ -437,19 +454,7 @@ function PongGame.finalScreen 1
     pop pointer 0
     push constant 0
     pop local 0
-label PongGame_38
-    push local 0
-    push constant 140
-    eq
-    not
-    push local 0
-    push constant 32
-    eq
-    not
-    and
-    not
-    if-goto PongGame_39
-    push constant 12
+    push constant 11
     push constant 18
     call Output.moveCursor 2
     pop temp 0
@@ -583,6 +588,18 @@ label PongGame_38
     call String.appendChar 2
     call Output.printString 1
     pop temp 0
+label PongGame_38
+    push local 0
+    push constant 140
+    eq
+    not
+    push local 0
+    push constant 32
+    eq
+    not
+    and
+    not
+    if-goto PongGame_39
     call Keyboard.keyPressed 0
     pop local 0
     goto PongGame_38
@@ -601,8 +618,99 @@ label PongGame_41
     eq
     not
     if-goto PongGame_43
+    call Screen.clearScreen 0
+    pop temp 0
     push constant 0
     pop this 4
+    push this 2
+    call Ball.dispose 1
+    pop temp 0
+    push constant 253
+    push constant 222
+    push constant 0
+    push constant 511
+    push constant 8
+    push constant 229
+    call Ball.new 6
+    pop this 2
+    push this 2
+    push constant 200
+    push constant 100
+    neg
+    call Ball.setDestination 3
+    pop temp 0
+    push constant 0
+    pop this 3
+    push constant 0
+    pop this 8
+    call Screen.clearScreen 0
+    pop temp 0
+    push constant 0
+    push constant 238
+    push constant 511
+    push constant 240
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    push constant 4
+    push constant 511
+    push constant 6
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 22
+    push constant 0
+    call Output.moveCursor 2
+    pop temp 0
+    push constant 11
+    call String.new 1
+    push constant 83
+    call String.appendChar 2
+    push constant 99
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 58
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 80
+    call String.appendChar 2
+    push constant 49
+    call String.appendChar 2
+    push constant 58
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    call Output.printString 1
+    pop temp 0
+    push this 6
+    call Output.printInt 1
+    pop temp 0
+    push constant 7
+    call String.new 1
+    push constant 32
+    call String.appendChar 2
+    push constant 47
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 80
+    call String.appendChar 2
+    push constant 50
+    call String.appendChar 2
+    push constant 58
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    call Output.printString 1
+    pop temp 0
+    push this 7
+    call Output.printInt 1
+    pop temp 0
     goto PongGame_42
 label PongGame_43
 label PongGame_42
