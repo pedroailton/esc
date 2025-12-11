@@ -24,7 +24,7 @@ function PongGame.new 0
     push constant 222
     push constant 0
     push constant 511
-    push constant 8
+    push constant 16
     push constant 229
     call Ball.new 6
     pop this 2

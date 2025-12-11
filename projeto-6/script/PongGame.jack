@@ -32,7 +32,7 @@ class PongGame {
 	    let bat_baixo_width = 50; // initial bat_baixo size
         let bat_cima = Bat.new(230, 8, bat_baixo_width, 7);
 	    let bat_baixo = Bat.new(230, 229, bat_cima_width, 7);
-        let ball = Ball.new(253, 222, 0, 511, 8, 229);
+        let ball = Ball.new(253, 222, 0, 511, 16, 229);
 
         do ball.setDestination(200, -100); // destino inicial para onde a bola deve ir
         do Screen.drawRectangle(0, 238, 511, 240); // Barra horizontal inferior
