@@ -6,12 +6,7 @@
 // Nome do Projeto: UFRPong
 // Descrição do Projeto: Jogo de Ping Pong para dois jogadores utilizando a linguagem Jack e o software do Nand to Tetris para execução do programa
 
-/**
- * The main class of the Pong game.
- */
 class Main {
-
-    /** Initializes a Pong game and starts running it. */
     function void main() {
         var PongGame game;
         do PongGame.newInstance();

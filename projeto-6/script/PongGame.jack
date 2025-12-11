@@ -80,10 +80,10 @@ class PongGame {
 
         // Printando pontuação no display
 	    do Output.moveCursor(22,0); // move o cursor de escrita da string para a linha 22 (de 23 totais)
-	    do Output.printString("Score: P1: X / P2: X");
-        do Output.moveCursor(22, 12);
+	    do Output.printString("Score: P1:  / P2: ");
+        do Output.moveCursor(22, 11);
         do Output.printInt(p1Score);
-        do Output.moveCursor(22, 20);
+        do Output.moveCursor(22, 19);
         do Output.printInt(p2Score);
 
         // O loop abaixo se repete enquanto o jogador não fechar e quiser repetir o jogo
@@ -111,16 +111,11 @@ class PongGame {
                 do gameStep();
             }
 
-            // se a tecla ESC for pressionada ou a bola colidir com a parede de cima ou de baixo
-            if (exit & wall = 4) {
-                let p1Score = p1Score + 1;
-                let perdedor = 2;
-                do ball.explodeAnimation();
-                do finalScreen();
-            }
-            if (exit & wall = 3) {
-                let p2Score = p2Score + 1;
-                let perdedor = 1;
+            // se a tecla ESC for pressionada e o perdedor já estiver definido como 1 ou 2
+            if (exit & ~(perdedor = 0)) {
+                if (perdedor = 2) { let p1Score = p1Score + 1; }
+                else { let p2Score = p2Score + 1; }
+                
                 do ball.explodeAnimation();
                 do finalScreen();
             }
@@ -132,10 +127,19 @@ class PongGame {
     Indica um movimento dos elementos móveis da tela do jogo.
     */
     method void gameStep() {
+        // duas movimentações da raquete de cima
         do bat_cima.move();
+        do bat_cima.move();
+
+        // duas movimentações da raquete de baixo
         do bat_baixo.move();
+        do bat_baixo.move();
+
         do moveBall();  // a bola se move, a partir dos métodos PongGame.moveBall() e Ball.move()
-        do Sys.wait(1); // muda a velocidade do jogo (em milissegundos em cada processamento)
+        do moveBall(); // a bola se movimenta duas vezes por passo para garantir dinamismo ao jogo, sem o usuário perder o controle das raquetes
+
+        // um tempo de espera maior dá mais fluidez ao movimento, uma vez que os elementos de movimentam duas vezes por passo
+        do Sys.wait(10); // muda a velocidade do jogo (em milissegundos em cada processamento)
         return;
     }
 
@@ -153,6 +157,7 @@ class PongGame {
         
         let wall = 0;
         let lastWall = 0;
+        let perdedor = 0;
         
         do drawBackground();
         return;
@@ -285,6 +290,9 @@ class PongGame {
                         }
                     }
                 }
+                else {
+                    let perdedor = 1;
+                }
             }
             else {
                 // Se a bola tocar na parede inferior (wall 4)
@@ -309,6 +317,9 @@ class PongGame {
                                 let bouncingDirection = 0; // bola rebatida ao centro
                             }
                         }
+                    }
+                    else {
+                        let perdedor = 2;
                     }
                 }
             }
