@@ -1,12 +1,8 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-// File name: projects/11/Pong/PongGame.jack
-
-/**
- * Represents a Pong game.
- */
 class PongGame {
+    // variáveis que representam as principais teclas utilizadas no programa
+    field int SCREEN_WIDTH; // 512
+    field int KEY_ESC; // 140
+    field int KEY_SPACE; // 32
 
     static PongGame instance; // the singelton, a Pong game instance     
     field Bat bat_cima;       // objeto bat_cima da classe Bat
@@ -21,6 +17,8 @@ class PongGame {
     field int bat_cima_width;
     field int bat_baixo_width;
 
+    field int perdedor;
+
     field boolean isDarkMode; // true = fundo preto, false = fundo branco
 
     // The current width of the bat
@@ -30,6 +28,10 @@ class PongGame {
     constructor PongGame new() {
 	    do Screen.clearScreen();
 
+        let SCREEN_WIDTH = 512;
+        let KEY_ESC = 140;
+        let KEY_SPACE = 32;
+
         let bat_cima_width = 50;  // initial bat_cima size
 	    let bat_baixo_width = 50; // initial bat_baixo size
         let bat_cima = Bat.new(230, 8, bat_baixo_width, 7);
@@ -37,8 +39,8 @@ class PongGame {
         let ball = Ball.new(253, 222, 0, 511, 16, 229);
 
         do ball.setDestination(200, -100); // destino inicial para onde a bola deve ir
-        do Screen.drawRectangle(0, 238, 511, 240); // Barra horizontal inferior
-	    do Screen.drawRectangle(0, 4, 511, 6); // Barra horizontal superior
+        do Screen.drawRectangle(0, 238, SCREEN_WIDTH - 1, 240); // Barra horizontal inferior
+	    do Screen.drawRectangle(0, 4, SCREEN_WIDTH - 1, 6); // Barra horizontal superior
 	
 	    let exit = false;
 	    let p1Score = 0;
@@ -89,10 +91,7 @@ class PongGame {
 	        // Primeiro loop do jogo: "inércia" no movimento dos objetos quando não há tecla pressionada
             while ((key = 0) & (~exit)) {
                 let key = Keyboard.keyPressed(); // a tecla do teclado é lida
-                do bat_cima.move(); // a raquete de cima se move
-		        do bat_baixo.move(); // a raquete de baixo se move
-                do moveBall(); // a bola se move, a partir dos métodos PongGame.moveBall() e Ball.move()
-                do Sys.wait(1);
+                do gameStep(); // Computa um passo de todos os elementos móveis do jogo
             }
 
             // verifica teclado para mover bat de cima (tecla a (97) -> esquerda; tecla d (100) -> direita)
@@ -104,29 +103,58 @@ class PongGame {
             else {if (key = 132) {do bat_baixo.setDirection(2);}}
 
             // verifica teclado para encerrar o jogo (tecla ESC (140))
-            if (key = 140) {let exit = true;}
+            if (key =KEY_ESC) {let exit = true;}
 
             // Executada quando uma tecla é pressionada
             while ((~(key = 0)) & (~exit)) {
                 let key = Keyboard.keyPressed();
-                do bat_cima.move();
-                do bat_baixo.move();
-                do moveBall();
-                do Sys.wait(1); // "segura" o processamento por 10 milisegundos (0,005 segundos)
+                do gameStep();
             }
 
             // se a tecla ESC for pressionada ou a bola colidir com a parede de cima ou de baixo
             if (exit & wall = 4) {
                 let p1Score = p1Score + 1;
+                let perdedor = 2;
                 do ball.explodeAnimation();
-                do instance.finalScreen();
+                do finalScreen();
             }
             if (exit & wall = 3) {
                 let p2Score = p2Score + 1;
+                let perdedor = 1;
                 do ball.explodeAnimation();
-                do instance.finalScreen();
+                do finalScreen();
             }
         }
+        return;
+    }
+
+    /***
+    Indica um movimento dos elementos móveis da tela do jogo.
+    */
+    method void gameStep() {
+        do bat_cima.move();
+        do bat_baixo.move();
+        do moveBall();  // a bola se move, a partir dos métodos PongGame.moveBall() e Ball.move()
+        do Sys.wait(1); // muda a velocidade do jogo (em milissegundos em cada processamento)
+        return;
+    }
+
+    /**
+    Reseta as variáveis de controle do jogo e redesenha os elementos da tela do jogo
+    */
+    method void resetRound() {
+        if (~(ball = null)) {
+            do ball.dispose(); // Garante que não haja vazamento de memória
+        }
+        
+        let ball = Ball.new(253, 222, 0, 511, 16, 229);
+        do ball.setColor(~isDarkMode);
+        do ball.setDestination(200, -100);
+        
+        let wall = 0;
+        let lastWall = 0;
+        
+        do drawBackground();
         return;
     }
 
@@ -245,12 +273,15 @@ class PongGame {
                 if (~exit) {
                     // Colisão com a quina esquerda da raquete
                     if (ballRight < (batCimaLeft + 10)) { 
-                        let bouncingDirection = -1;
+                        let bouncingDirection = -1; // bola rebatida na diagonal esquerda
                     }
                     else {
                         // Colisão com a quina direita da raquete
                         if (ballLeft > (batCimaRight - 10)) { 
-                            let bouncingDirection = 1;
+                            let bouncingDirection = 1; // bola rebatida na diagonal direita
+                        }
+                        else {
+                            let bouncingDirection = 0; // bola rebatida ao centro
                         }
                     }
                 }
@@ -292,39 +323,29 @@ class PongGame {
 
         let key = 0;	
 
+        do Output.moveCursor(9, 18); // issue: centralizar essas duas mensagens na tela
+        do Output.printString("Game Over. P  Perdeu");
+        do Output.moveCursor(9, 30); // Espaço de caractere logo depois do P, para completar "P2" ou "P1"
+        do Output.printInt(perdedor);
         do Output.moveCursor(11, 18); // issue: centralizar essas duas mensagens na tela
         do Output.printString("Pressione ESC para Sair");
         do Output.moveCursor(13, 15);
         do Output.printString("Pressione SPACE para Jogar Novamente");
 
-        while(~(key = 140) & ~(key = 32)) {
+        while(~(key = KEY_ESC) & ~(key = KEY_SPACE)) {
             let key = Keyboard.keyPressed();
         }
         // Se ESC for pressionado, o repetir também acaba
-        if (key = 140) {
+        if (key = KEY_ESC) {
             let repetir = false; // variável de controle de repetição define que o run termine definitivamente
         }
         else {
-            if (key = 32) {
+            if (key = KEY_SPACE) {
                 let exit = false; // variável de controle reinicia o exit
 
-                // 1. RESETA A BOLA (Destrói a antiga e cria uma nova)
-                do ball.dispose();
-                let ball = Ball.new(253, 222, 0, 511, 16, 229);
-                
-                // IMPORTANTE: Aplica a cor do tema na nova bola
-                do ball.setColor(~isDarkMode); 
-                do ball.setDestination(200, -100);
+                do resetRound(); // reseta as variáveis e redesenha os elementos da tela
 
-                // 2. RESETA VARIÁVEIS DE CONTROLE
-                let wall = 0;
-                let lastWall = 0;
-
-                // 3. DESENHA O FUNDO E O CENÁRIO
-                // Este método já limpa a tela (com a cor certa), desenha paredes e mostra os objetos
-                do drawBackground(); 
-
-                // 4. IMPRIME O PLACAR
+                // Imprime o placar
                 do Output.moveCursor(22,0);
                 do Output.printString("Score: P1: ");
                 do Output.printInt(p1Score);
