@@ -90,13 +90,13 @@ class PongGame {
                 do Sys.wait(1);
             }
 
-            // verifica teclado para mover bat de baixo (tecla a (97) -> esquerda; tecla d (100) -> direita)
-            if (key = 97) {do bat_baixo.setDirection(1);}
-            else {if (key = 100) {do bat_baixo.setDirection(2);}}
+            // verifica teclado para mover bat de cima (tecla a (97) -> esquerda; tecla d (100) -> direita)
+            if (key = 97) {do bat_cima.setDirection(1);}
+            else {if (key = 100) {do bat_cima.setDirection(2);}}
 
-            // verifica teclado para mover bat de cima (tecla flecha para esquerda (130) e tecla flecha para direita (132))
-            if (key = 130) {do bat_cima.setDirection(1);}
-            else {if (key = 132) {do bat_cima.setDirection(2);}}
+            // verifica teclado para mover bat de baixo (tecla flecha para esquerda (130) e tecla flecha para direita (132))
+            if (key = 130) {do bat_baixo.setDirection(1);}
+            else {if (key = 132) {do bat_baixo.setDirection(2);}}
 
             // verifica teclado para encerrar o jogo (tecla ESC (140))
             if (key = 140) {let exit = true;}
@@ -113,10 +113,12 @@ class PongGame {
             // se a tecla ESC for pressionada ou a bola colidir com a parede de cima ou de baixo
             if (exit & wall = 4) {
                 let p1Score = p1Score + 1;
+                do ball.explodeAnimation();
                 do instance.finalScreen();
             }
             if (exit & wall = 3) {
                 let p2Score = p2Score + 1;
+                do ball.explodeAnimation();
                 do instance.finalScreen();
             }
         }
@@ -225,8 +227,12 @@ class PongGame {
 
                 // RESETA A BOLA (Destrói a antiga e cria uma nova no centro)
                 do ball.dispose();
-                let ball = Ball.new(253, 222, 0, 511, 8, 229);
+                let ball = Ball.new(253, 222, 0, 511, 16, 229);
                 do ball.setDestination(200, -100); // Define o primeiro movimento
+
+                // REDESENHA A raquete
+                do bat_cima.show()
+                do bat_baixo.show()
 
                 // RESETA VARIÁVEIS DE CONTROLE
                 let wall = 0;

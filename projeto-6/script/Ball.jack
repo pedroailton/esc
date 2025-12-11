@@ -303,14 +303,53 @@ class Ball {
         return;
     }
 
-    /*
-    method void explodeAnimation(int Ax, int Ay) {
-        do hide();
+    method void explodeAnimation() {
+        var int memAddress;
+        var int location;
+
+        // y * 32: Como cada linha tem 32 palavras de largura, multiplicar y por 32 faz você descer verticalmente até a linha correta.
+        // x / 16: Como cada endereço guarda 16 pixels, dividir x por 16 diz em qual "bloco" horizontal você está.
+        let location = ((Math.multiply(y, 32)) + (Math.divide(x, 16)));
+
+        do hide(); // apaga a bola
+
         // Frame 1
+        let memAddress = 16384+location;
+        do Memory.poke(memAddress+0, 0);
+        do Memory.poke(memAddress+32, 0);
+        do Memory.poke(memAddress+64, 0);
+        do Memory.poke(memAddress+96, 384);
+        do Memory.poke(memAddress+128, 576);
+        do Memory.poke(memAddress+160, 1440);
+        do Memory.poke(memAddress+192, 2640);
+        do Memory.poke(memAddress+224, 5160);
+        do Memory.poke(memAddress+256, 2640);
+        do Memory.poke(memAddress+288, 1440);
+        do Memory.poke(memAddress+320, 576);
+        do Memory.poke(memAddress+352, 384);
+        do Memory.poke(memAddress+384, 0);
+        do Memory.poke(memAddress+416, 0);
+        do Memory.poke(memAddress+448, 0);
+        do Memory.poke(memAddress+480, 0);
 
         // Frame 2
+        do Memory.poke(memAddress+0, 256);
+        do Memory.poke(memAddress+32, 640);
+        do Memory.poke(memAddress+64, 256);
+        do Memory.poke(memAddress+96, 4096);
+        do Memory.poke(memAddress+128, 10624);
+        do Memory.poke(memAddress+160, 4674);
+        do Memory.poke(memAddress+192, 1189);
+        do Memory.poke(memAddress+224, 18706);
+        do Memory.poke(memAddress+256, -21872);
+        do Memory.poke(memAddress+288, 17442);
+        do Memory.poke(memAddress+320, 581);
+        do Memory.poke(memAddress+352, 4482);
+        do Memory.poke(memAddress+384, 10256);
+        do Memory.poke(memAddress+416, 4136);
+        do Memory.poke(memAddress+448, 16);
+        do Memory.poke(memAddress+480, 0);
 
         return;
-        // terminar depois
-    }*/
+    }
 }

@@ -186,7 +186,7 @@ label PongGame_3
     eq
     not
     if-goto PongGame_5
-    push this 1
+    push this 0
     push constant 1
     call Bat.setDirection 2
     pop temp 0
@@ -197,7 +197,7 @@ label PongGame_5
     eq
     not
     if-goto PongGame_7
-    push this 1
+    push this 0
     push constant 2
     call Bat.setDirection 2
     pop temp 0
@@ -210,7 +210,7 @@ label PongGame_4
     eq
     not
     if-goto PongGame_9
-    push this 0
+    push this 1
     push constant 1
     call Bat.setDirection 2
     pop temp 0
@@ -221,7 +221,7 @@ label PongGame_9
     eq
     not
     if-goto PongGame_11
-    push this 0
+    push this 1
     push constant 2
     call Bat.setDirection 2
     pop temp 0
@@ -277,6 +277,9 @@ label PongGame_15
     push constant 1
     add
     pop this 6
+    push this 2
+    call Ball.explodeAnimation 1
+    pop temp 0
     push static 0
     call PongGame.finalScreen 1
     pop temp 0
@@ -294,6 +297,9 @@ label PongGame_16
     push constant 1
     add
     pop this 7
+    push this 2
+    call Ball.explodeAnimation 1
+    pop temp 0
     push static 0
     call PongGame.finalScreen 1
     pop temp 0
@@ -629,7 +635,7 @@ label PongGame_41
     push constant 222
     push constant 0
     push constant 511
-    push constant 8
+    push constant 16
     push constant 229
     call Ball.new 6
     pop this 2
