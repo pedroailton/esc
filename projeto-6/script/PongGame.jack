@@ -21,6 +21,8 @@ class PongGame {
     field int bat_cima_width;
     field int bat_baixo_width;
 
+    field boolean isDarkMode; // true = fundo preto, false = fundo branco
+
     // The current width of the bat
     field int batWidth;
 
@@ -70,6 +72,9 @@ class PongGame {
     /** Começa o jogo*/
     method void run() {
         var char key; // variável que vai receber os valores lidos das teclas do teclado
+
+        // Chamada da Tela Inicial
+        do initialScreen();
 
         // Printando pontuação no display
 	    do Output.moveCursor(22,0); // move o cursor de escrita da string para a linha 22 (de 23 totais)
@@ -122,6 +127,85 @@ class PongGame {
                 do instance.finalScreen();
             }
         }
+        return;
+    }
+
+    method void initialScreen() {
+        var char key;
+
+        let key = 0;
+
+        do Screen.clearScreen();
+        do Output.moveCursor(11, 18);
+        do Output.printString("UFRPONG");
+        do Output.moveCursor(13, 15);
+        do Output.printString("Pressione qualquer tecla para jogar");
+
+        while (key = 0) {
+            let key = Keyboard.keyPressed();
+        }
+
+        // Espera soltar a tecla para não pular a próxima tela
+        while (~(key = 0)) {
+            let key = Keyboard.keyPressed();
+        }
+
+        do Screen.clearScreen();
+        do Output.moveCursor(11, 18);
+        do Output.printString("Escolha o tema do jogo:");
+        do Output.moveCursor(13, 15);
+        do Output.printString("c -> claro | e -> escuro");
+
+        let key = 0;
+
+        while (key = 0) {
+            let key = Keyboard.keyPressed();
+        }
+
+        // se a tecla presionada for "c"
+        if (key = 99){
+            let isDarkMode = false; // Modo Claro
+        }
+        else {
+            // se a tecla pressionada for "e"
+            if (key = 101) {
+                let isDarkMode = true; // Modo Escuro
+            }
+        }
+
+        // Aplica o tema aos objetos
+        // Se DarkMode (Fundo Preto), objetos são Brancos (false)
+        // Se LightMode (Fundo Branco), objetos são Pretos (true)
+        do bat_cima.setColor(~isDarkMode);
+        do bat_baixo.setColor(~isDarkMode);
+        do ball.setColor(~isDarkMode);
+
+        // Prepara o fundo
+        do drawBackground();
+
+        return;
+    }
+
+    method void drawBackground() {
+        if (isDarkMode) {
+            do Screen.setColor(true);
+            do Screen.drawRectangle(0, 0, 511, 255); // Pinta a tela toda de preto
+        }
+        else {
+            do Screen.clearScreen(); //Limpa toda a tela para ficar branca
+        }
+
+        // Desenha as barras (paredes)
+        // A cor das barras deve ser igual à dos objetos (contrária ao fundo)
+        do Screen.setColor(~isDarkMode); 
+        do Screen.drawRectangle(0, 238, 511, 240); // Barra inferior
+        do Screen.drawRectangle(0, 4, 511, 6);     // Barra superior
+
+        // Redesenha os objetos para garantir que apareçam sobre o fundo
+        do bat_cima.show();
+        do bat_baixo.show();
+        do ball.show();
+        
         return;
     }
 
@@ -222,28 +306,25 @@ class PongGame {
         }
         else {
             if (key = 32) {
-                do Screen.clearScreen(); // Limpa a tela
-                let exit = false; // variável de controle reinicia o exit para que o run rode novamente normalmente
+                let exit = false; // variável de controle reinicia o exit
 
-                // RESETA A BOLA (Destrói a antiga e cria uma nova no centro)
+                // 1. RESETA A BOLA (Destrói a antiga e cria uma nova)
                 do ball.dispose();
                 let ball = Ball.new(253, 222, 0, 511, 16, 229);
-                do ball.setDestination(200, -100); // Define o primeiro movimento
+                
+                // IMPORTANTE: Aplica a cor do tema na nova bola
+                do ball.setColor(~isDarkMode); 
+                do ball.setDestination(200, -100);
 
-                // REDESENHA A raquete
-                do bat_cima.show()
-                do bat_baixo.show()
-
-                // RESETA VARIÁVEIS DE CONTROLE
+                // 2. RESETA VARIÁVEIS DE CONTROLE
                 let wall = 0;
                 let lastWall = 0;
 
-                // REDESENHA A TELA
-                do Screen.clearScreen(); 
-                do Screen.drawRectangle(0, 238, 511, 240); // Barra inferior
-                do Screen.drawRectangle(0, 4, 511, 6);     // Barra superior
-                
-                // Redesenha o placar com os valores ACUMULADOS
+                // 3. DESENHA O FUNDO E O CENÁRIO
+                // Este método já limpa a tela (com a cor certa), desenha paredes e mostra os objetos
+                do drawBackground(); 
+
+                // 4. IMPRIME O PLACAR
                 do Output.moveCursor(22,0);
                 do Output.printString("Score: P1: ");
                 do Output.printInt(p1Score);
@@ -253,5 +334,4 @@ class PongGame {
         }
         return;
     }
-
 }

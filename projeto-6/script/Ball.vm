@@ -1,5 +1,5 @@
 function Ball.new 0
-    push constant 15
+    push constant 16
     call Memory.alloc 1
     pop pointer 0
     push argument 0
@@ -7,21 +7,19 @@ function Ball.new 0
     push argument 1
     pop this 1
     push argument 2
-    pop this 10
+    pop this 11
     push argument 3
     push constant 6
     sub
-    pop this 11
-    push argument 4
     pop this 12
+    push argument 4
+    pop this 13
     push argument 5
     push constant 6
     sub
-    pop this 13
-    push constant 0
     pop this 14
     push constant 0
-    pop this 2
+    pop this 15
     push constant 0
     pop this 3
     push constant 0
@@ -32,16 +30,28 @@ function Ball.new 0
     pop this 6
     push constant 0
     pop this 7
-    push constant 1
-    neg
+    push constant 0
     pop this 8
     push constant 1
     neg
     pop this 9
+    push constant 1
+    neg
+    pop this 10
+    push constant 1
+    neg
+    pop this 2
     push pointer 0
     call Ball.show 1
     pop temp 0
     push pointer 0
+    return
+function Ball.setColor 0
+    push argument 0
+    pop pointer 0
+    push argument 1
+    pop this 2
+    push constant 0
     return
 function Ball.dispose 0
     push argument 0
@@ -54,8 +64,7 @@ function Ball.dispose 0
 function Ball.show 0
     push argument 0
     pop pointer 0
-    push constant 1
-    neg
+    push this 2
     call Screen.setColor 1
     pop temp 0
     push pointer 0
@@ -66,7 +75,8 @@ function Ball.show 0
 function Ball.hide 0
     push argument 0
     pop pointer 0
-    push constant 0
+    push this 2
+    not
     call Screen.setColor 1
     pop temp 0
     push pointer 0
@@ -107,22 +117,22 @@ function Ball.setDestination 3
     push argument 1
     push this 0
     sub
-    pop this 2
+    pop this 3
     push argument 2
     push this 1
     sub
-    pop this 3
-    push this 2
+    pop this 4
+    push this 3
     call Math.abs 1
     pop local 0
-    push this 3
+    push this 4
     call Math.abs 1
     pop local 1
     push local 0
     push local 1
     lt
-    pop this 7
-    push this 7
+    pop this 8
+    push this 8
     not
     if-goto Ball_1
     push local 0
@@ -134,30 +144,30 @@ function Ball.setDestination 3
     goto Ball_0
 label Ball_1
 label Ball_0
-    push this 2
-    push constant 0
-    gt
-    pop this 8
     push this 3
     push constant 0
     gt
     pop this 9
+    push this 4
+    push constant 0
+    gt
+    pop this 10
     push constant 2
     push local 1
     call Math.multiply 2
     push local 0
     sub
-    pop this 4
-    push constant 2
-    push local 1
-    call Math.multiply 2
     pop this 5
     push constant 2
     push local 1
+    call Math.multiply 2
+    pop this 6
+    push constant 2
+    push local 1
     push local 0
     sub
     call Math.multiply 2
-    pop this 6
+    pop this 7
     push constant 0
     return
 function Ball.move 1
@@ -168,10 +178,10 @@ function Ball.move 1
     push pointer 0
     call Ball.hide 1
     pop temp 0
-    push this 2
+    push this 3
     push constant 0
     eq
-    push this 3
+    push this 4
     push constant 0
     eq
     and
@@ -185,40 +195,40 @@ function Ball.move 1
     goto Ball_2
 label Ball_3
 label Ball_2
-    push this 4
+    push this 5
     push constant 0
     lt
     not
     if-goto Ball_5
-    push this 4
     push this 5
-    add
-    pop this 4
-    goto Ball_4
-label Ball_5
-    push this 4
     push this 6
     add
-    pop this 4
+    pop this 5
+    goto Ball_4
+label Ball_5
+    push this 5
     push this 7
+    add
+    pop this 5
+    push this 8
     not
     if-goto Ball_7
-    push this 8
+    push this 9
     not
     if-goto Ball_9
     push this 0
     push local 0
     add
     pop this 0
-    push this 2
+    push this 3
     push constant 0
     gt
     not
     if-goto Ball_11
-    push this 2
+    push this 3
     push local 0
     sub
-    pop this 2
+    pop this 3
     goto Ball_10
 label Ball_11
 label Ball_10
@@ -228,37 +238,37 @@ label Ball_9
     push local 0
     sub
     pop this 0
-    push this 2
+    push this 3
     push constant 0
     lt
     not
     if-goto Ball_13
-    push this 2
+    push this 3
     push local 0
     add
-    pop this 2
+    pop this 3
     goto Ball_12
 label Ball_13
 label Ball_12
 label Ball_8
     goto Ball_6
 label Ball_7
-    push this 9
+    push this 10
     not
     if-goto Ball_15
     push this 1
     push local 0
     add
     pop this 1
-    push this 3
+    push this 4
     push constant 0
     gt
     not
     if-goto Ball_17
-    push this 3
+    push this 4
     push local 0
     sub
-    pop this 3
+    pop this 4
     goto Ball_16
 label Ball_17
 label Ball_16
@@ -268,40 +278,40 @@ label Ball_15
     push local 0
     sub
     pop this 1
-    push this 3
+    push this 4
     push constant 0
     lt
     not
     if-goto Ball_19
-    push this 3
+    push this 4
     push local 0
     add
-    pop this 3
+    pop this 4
     goto Ball_18
 label Ball_19
 label Ball_18
 label Ball_14
 label Ball_6
 label Ball_4
-    push this 7
+    push this 8
     not
     if-goto Ball_21
-    push this 9
+    push this 10
     not
     if-goto Ball_23
     push this 1
     push local 0
     add
     pop this 1
-    push this 3
+    push this 4
     push constant 0
     gt
     not
     if-goto Ball_25
-    push this 3
+    push this 4
     push local 0
     sub
-    pop this 3
+    pop this 4
     goto Ball_24
 label Ball_25
 label Ball_24
@@ -311,37 +321,37 @@ label Ball_23
     push local 0
     sub
     pop this 1
-    push this 3
+    push this 4
     push constant 0
     lt
     not
     if-goto Ball_27
-    push this 3
+    push this 4
     push local 0
     add
-    pop this 3
+    pop this 4
     goto Ball_26
 label Ball_27
 label Ball_26
 label Ball_22
     goto Ball_20
 label Ball_21
-    push this 8
+    push this 9
     not
     if-goto Ball_29
     push this 0
     push local 0
     add
     pop this 0
-    push this 2
+    push this 3
     push constant 0
     gt
     not
     if-goto Ball_31
-    push this 2
+    push this 3
     push local 0
     sub
-    pop this 2
+    pop this 3
     goto Ball_30
 label Ball_31
 label Ball_30
@@ -351,101 +361,101 @@ label Ball_29
     push local 0
     sub
     pop this 0
-    push this 2
+    push this 3
     push constant 0
     lt
     not
     if-goto Ball_33
-    push this 2
+    push this 3
     push local 0
     add
-    pop this 2
+    pop this 3
     goto Ball_32
 label Ball_33
 label Ball_32
 label Ball_28
 label Ball_20
     push constant 0
-    pop this 14
+    pop this 15
     push this 0
-    push this 10
+    push this 11
     lt
     not
     if-goto Ball_35
     push constant 1
-    pop this 14
-    push this 10
+    pop this 15
+    push this 11
     pop this 0
     goto Ball_34
 label Ball_35
 label Ball_34
     push this 0
-    push this 11
+    push this 12
     gt
     not
     if-goto Ball_37
     push constant 2
-    pop this 14
-    push this 11
+    pop this 15
+    push this 12
     pop this 0
     goto Ball_36
 label Ball_37
 label Ball_36
     push this 1
-    push this 12
+    push this 13
     lt
     not
     if-goto Ball_39
     push constant 3
-    pop this 14
-    push this 12
+    pop this 15
+    push this 13
     pop this 1
     goto Ball_38
 label Ball_39
 label Ball_38
     push this 1
-    push this 13
+    push this 14
     gt
     not
     if-goto Ball_41
     push constant 4
-    pop this 14
-    push this 13
+    pop this 15
+    push this 14
     pop this 1
     goto Ball_40
 label Ball_41
 label Ball_40
-    push this 14
+    push this 15
     push constant 0
     eq
     not
     not
     if-goto Ball_43
     push constant 0
-    pop this 2
-    push constant 0
     pop this 3
+    push constant 0
+    pop this 4
     goto Ball_42
 label Ball_43
 label Ball_42
     push pointer 0
     call Ball.show 1
     pop temp 0
-    push this 14
+    push this 15
     return
 function Ball.bounce 3
     push argument 0
     pop pointer 0
     push constant 600
     pop local 2
-    push this 14
+    push this 15
     push constant 1
     eq
     not
     if-goto Ball_45
-    push this 11
+    push this 12
     pop local 0
-    push this 9
+    push this 10
     not
     if-goto Ball_47
     push this 1
@@ -461,14 +471,14 @@ label Ball_47
 label Ball_46
     goto Ball_44
 label Ball_45
-    push this 14
+    push this 15
     push constant 2
     eq
     not
     if-goto Ball_49
-    push this 10
+    push this 11
     pop local 0
-    push this 9
+    push this 10
     not
     if-goto Ball_51
     push this 1
@@ -484,14 +494,14 @@ label Ball_51
 label Ball_50
     goto Ball_48
 label Ball_49
-    push this 14
+    push this 15
     push constant 3
     eq
     not
     if-goto Ball_53
-    push this 13
+    push this 14
     pop local 1
-    push this 8
+    push this 9
     not
     if-goto Ball_55
     push this 0
@@ -507,9 +517,9 @@ label Ball_55
 label Ball_54
     goto Ball_52
 label Ball_53
-    push this 12
+    push this 13
     pop local 1
-    push this 8
+    push this 9
     not
     if-goto Ball_57
     push this 0
@@ -526,10 +536,10 @@ label Ball_56
 label Ball_52
 label Ball_48
 label Ball_44
-    push this 14
+    push this 15
     push constant 1
     eq
-    push this 14
+    push this 15
     push constant 2
     eq
     or

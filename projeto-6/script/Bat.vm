@@ -1,5 +1,5 @@
 function Bat.new 0
-    push constant 5
+    push constant 6
     call Memory.alloc 1
     pop pointer 0
     push argument 0
@@ -17,6 +17,13 @@ function Bat.new 0
     pop temp 0
     push pointer 0
     return
+function Bat.setColor 0
+    push argument 0
+    pop pointer 0
+    push argument 1
+    pop this 5
+    push constant 0
+    return
 function Bat.dispose 0
     push argument 0
     pop pointer 0
@@ -28,8 +35,7 @@ function Bat.dispose 0
 function Bat.show 0
     push argument 0
     pop pointer 0
-    push constant 1
-    neg
+    push this 5
     call Screen.setColor 1
     pop temp 0
     push pointer 0
@@ -40,7 +46,8 @@ function Bat.show 0
 function Bat.hide 0
     push argument 0
     pop pointer 0
-    push constant 0
+    push this 5
+    not
     call Screen.setColor 1
     pop temp 0
     push pointer 0
@@ -125,7 +132,8 @@ label Bat_2
     not
     not
     if-goto Bat_5
-    push constant 0
+    push this 5
+    not
     call Screen.setColor 1
     pop temp 0
     push this 0
@@ -147,8 +155,7 @@ label Bat_2
     goto Bat_4
 label Bat_5
 label Bat_4
-    push constant 1
-    neg
+    push this 5
     call Screen.setColor 1
     pop temp 0
     push this 0
@@ -184,7 +191,8 @@ label Bat_6
     gt
     not
     if-goto Bat_9
-    push constant 0
+    push this 5
+    not
     call Screen.setColor 1
     pop temp 0
     push this 0
@@ -202,8 +210,7 @@ label Bat_6
     goto Bat_8
 label Bat_9
 label Bat_8
-    push constant 1
-    neg
+    push this 5
     call Screen.setColor 1
     pop temp 0
     push this 0

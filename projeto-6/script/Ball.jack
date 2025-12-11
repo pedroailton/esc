@@ -11,6 +11,8 @@
 class Ball {
     field int x, y; // Ponto de origem da sprite da bola: borda superior esquerda (em pixels)
 
+    field boolean color;
+
     // distância até o destino da bola: deslocamento horizontal e vertical (em pixels)
     field int lengthx, lengthy; // são decrementadas à medida que a bola se move até chegarem a zero
 
@@ -49,9 +51,16 @@ class Ball {
         let positivex = true;
         let positivey = true;
 
+        let color = true; // por padrão, a bola tem cor preta
+
         do show(); // desenha a bola na tela
 
         return this; // retorna o objeto criado pela classe para PongGame.jack
+    }
+
+    method void setColor(boolean new_color) {
+        let color = new_color;
+        return;
     }
 
     /** Deallocates the Ball's memory. */
@@ -62,14 +71,14 @@ class Ball {
 
     /** Shows the ball. */
     method void show() {
-        do Screen.setColor(true);
+        do Screen.setColor(color);
         do draw();
         return;
     }
 
     /** Hides the ball. */
     method void hide() {
-        do Screen.setColor(false);
+        do Screen.setColor(~color);
         do draw();
         return;
     }

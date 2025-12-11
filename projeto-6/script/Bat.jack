@@ -19,6 +19,7 @@ class Bat {
     field int x, y;           // the bat's screen location
     field int width, height;  // the bat's width and height
     field int direction;      // direction of the bat's movement (1 = left, 2 = right)
+    field boolean color;
 
     /** Constructs a new bat with the given location and width. */
     constructor Bat new(int Ax, int Ay, int Awidth, int Aheight) {
@@ -31,6 +32,12 @@ class Bat {
         return this;
     }
 
+    /** Inverte a dinâmica de preto e branco para alterar o tema do jogo */
+    method void setColor(boolean new_color) {
+        let color = new_color;
+        return;
+    }
+
     /** Deallocates the object's memory. */
     method void dispose() {
         do Memory.deAlloc(this);
@@ -39,23 +46,14 @@ class Bat {
 
     /** Shows the bat. */
     method void show() {
-        do Screen.setColor(true); // esse trecho que deve mudar quando eu for trocar o tema de fundo
+        do Screen.setColor(color); // usa a cor definida em setColor()
         do draw();
         return;
-	
-	/*
-	if (screenMode = "claro"):
-		do Screen.setColor(false);
-	else {
-		if (screenMode = "escuro") {
-		}
-	}
-	*/
     }
 
     /** Hides the bat. */
     method void hide() {
-        do Screen.setColor(false);
+        do Screen.setColor(~color); // usa a cor inversa para apagar
         do draw();
         return;
     }
@@ -99,12 +97,12 @@ class Bat {
             
             // Só apaga o rastro à direita se não estourar a tela (511)
             if (~((x + width) > 510)) {
-                do Screen.setColor(false);
+                do Screen.setColor(~color);
                 do Screen.drawRectangle((x + width) + 1, y, (x + width) + 1, y + height);
             }
             
             // Desenha a nova linha à esquerda
-            do Screen.setColor(true);
+            do Screen.setColor(color);
             do Screen.drawRectangle(x, y, x, y + height);
         }
         else {
@@ -114,12 +112,12 @@ class Bat {
             
             // Só apaga o rastro à esquerda se x > 0 (para não desenhar em x=-1)
             if (x > 0) {
-                do Screen.setColor(false);
+                do Screen.setColor(~color);
                 do Screen.drawRectangle(x - 1, y, x - 1, y + height);
             }
             
             // Desenha a nova linha à direita
-            do Screen.setColor(true);
+            do Screen.setColor(color);
             do Screen.drawRectangle(x + width, y, x + width, y + height);
         }
         return;
