@@ -79,6 +79,11 @@ class Bat {
     */
 
     method void move() {
+        // Se direção for 0, não faz nada (Parado)
+        if (direction = 0) {
+            return;
+        }
+
         if (direction = 1) {
             // Movimento para a Esquerda
             let x = x - 1;
